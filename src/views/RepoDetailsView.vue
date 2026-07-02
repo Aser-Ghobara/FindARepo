@@ -1,5 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import ErrorState from '../components/ErrorState.vue'
 import LoadingState from '../components/LoadingState.vue'
 import { getContributors, getRepo } from '../api/github'
@@ -16,6 +17,7 @@ const props = defineProps({
   },
 })
 
+const route = useRoute()
 const repo = ref(null)
 const contributors = ref([])
 const loading = ref(false)
@@ -23,6 +25,11 @@ const error = ref(null)
 
 const { isFavorite, toggleFavorite } = useFavorites()
 const isFavorited = computed(() => (repo.value ? isFavorite(repo.value.id) : false))
+const cameFromFavorites = computed(() => route.query.from === 'favorites')
+const backRoute = computed(() => (cameFromFavorites.value ? '/favorites' : '/'))
+const backLabel = computed(() =>
+  cameFromFavorites.value ? 'Back to favorites' : 'Back to search results',
+)
 
 const numberFormatter = new Intl.NumberFormat('en-US')
 const dateFormatter = new Intl.DateTimeFormat('en-US', {
@@ -69,7 +76,7 @@ onMounted(loadDetails)
 
 <template>
   <main class="repo-details">
-    <RouterLink class="back-link" to="/">← Back to search results</RouterLink>
+    <RouterLink class="back-link" :to="backRoute">← {{ backLabel }}</RouterLink>
 
     <LoadingState v-if="loading" message="Loading repository details..." />
     <ErrorState v-else-if="error" :message="error.message" @retry="loadDetails" />

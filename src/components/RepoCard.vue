@@ -7,6 +7,10 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  source: {
+    type: String,
+    default: 'search',
+  },
 })
 
 const { isFavorite, toggleFavorite } = useFavorites()
@@ -40,10 +44,16 @@ const languageColors = {
   Ruby: '#cc342d',
 }
 
-const repoRoute = computed(
-  () =>
-    `/repo/${encodeURIComponent(props.repo.owner.login)}/${encodeURIComponent(props.repo.name)}`,
-)
+const repoRoute = computed(() => {
+  const path = `/repo/${encodeURIComponent(props.repo.owner.login)}/${encodeURIComponent(props.repo.name)}`
+
+  return props.source === 'favorites'
+    ? {
+        path,
+        query: { from: 'favorites' },
+      }
+    : path
+})
 
 const languageColor = computed(
   () => languageColors[props.repo.language] ?? 'var(--color-text-muted)',

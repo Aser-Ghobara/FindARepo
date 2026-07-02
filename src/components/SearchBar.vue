@@ -87,13 +87,16 @@ input {
   width: 100%;
   max-width: 100%;
   min-width: 0;
-  min-height: 3rem;
-  padding: var(--space-3) var(--space-4) var(--space-3) 2.75rem;
+  min-height: 3.5rem;
+  padding: var(--space-3) var(--space-6) var(--space-3) 3rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-full);
   color: var(--color-text);
   font: inherit;
   background: var(--color-surface);
+  box-shadow:
+    0 1px 2px rgb(15 23 42 / 5%),
+    0 12px 32px rgb(37 99 235 / 10%);
   transition:
     border-color 150ms ease,
     box-shadow 150ms ease;

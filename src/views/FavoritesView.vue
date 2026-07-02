@@ -12,9 +12,16 @@ const { favorites } = useFavorites()
 
     <EmptyState
       v-if="favorites.length === 0"
-      message="No favorites yet. Star a repository to save it here."
+      message="No favorites yet. Click on the heart icon to save one here."
     />
-    <RepoList v-else :results="favorites" :loading="false" :error="null" :has-more="false" />
+    <RepoList
+      v-else
+      :results="favorites"
+      :loading="false"
+      :error="null"
+      :has-more="false"
+      source="favorites"
+    />
   </main>
 </template>
 

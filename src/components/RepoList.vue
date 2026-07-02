@@ -27,6 +27,10 @@ defineProps({
     type: Number,
     default: 0,
   },
+  source: {
+    type: String,
+    default: 'search',
+  },
 })
 
 const emit = defineEmits(['load-more', 'sort-change'])
@@ -56,7 +60,7 @@ function handleSortChange() {
   </header>
 
   <div v-if="results.length > 0" class="repo-grid">
-    <RepoCard v-for="repo in results" :key="repo.id" :repo="repo" />
+    <RepoCard v-for="repo in results" :key="repo.id" :repo="repo" :source="source" />
   </div>
 
   <div v-if="(loading && results.length > 0) || (hasMore && !loading)" class="repo-list-actions">
