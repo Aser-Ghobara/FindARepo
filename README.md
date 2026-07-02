@@ -2,6 +2,14 @@
 
 A Vue 3 app for searching GitHub repositories, viewing repository details and top contributors, and saving favorites for later.
 
+## Tech stack
+
+- [Vue 3](https://vuejs.org/) (Composition API) with [Vite](https://vite.dev/)
+- [Vue Router](https://router.vuejs.org/) for the three routes (search, repository details, favorites)
+- Native `fetch` for all GitHub API calls, no HTTP client library
+- Plain CSS with a design tokens file, no CSS framework
+- [Vitest](https://vitest.dev/) and [@vue/test-utils](https://test-utils.vuejs.org/) (with `jsdom`) for unit tests
+
 ## Setup and run
 
 ```sh
