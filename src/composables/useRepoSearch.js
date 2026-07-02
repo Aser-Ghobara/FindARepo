@@ -9,6 +9,8 @@ export function useRepoSearch() {
   const loading = ref(false)
   const error = ref(null)
   const hasMore = ref(false)
+  const hasSearched = ref(false)
+  const totalCount = ref(0)
   let currentController
 
   async function fetchResults(targetPage, append = false) {
@@ -25,6 +27,7 @@ export function useRepoSearch() {
 
       results.value = append ? [...results.value, ...items] : items
       page.value = targetPage
+      totalCount.value = response.total_count
       hasMore.value = items.length > 0 && results.value.length < response.total_count
     } catch (caughtError) {
       if (caughtError.name === 'AbortError') {
@@ -45,6 +48,7 @@ export function useRepoSearch() {
     results.value = []
     page.value = 1
     hasMore.value = false
+    totalCount.value = 0
 
     if (!searchQuery.trim()) {
       currentController?.abort()
@@ -53,6 +57,7 @@ export function useRepoSearch() {
       return
     }
 
+    hasSearched.value = true
     await fetchResults(1)
   }
 
@@ -72,6 +77,8 @@ export function useRepoSearch() {
     loading,
     error,
     hasMore,
+    hasSearched,
+    totalCount,
     search,
     loadMore,
   }
