@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue'
+import { useFavorites } from '../composables/useFavorites'
 
 const props = defineProps({
   repo: {
@@ -7,6 +8,9 @@ const props = defineProps({
     required: true,
   },
 })
+
+const { isFavorite, toggleFavorite } = useFavorites()
+const isFavorited = computed(() => isFavorite(props.repo.id))
 
 const numberFormatter = new Intl.NumberFormat('en-US')
 const relativeTimeFormatter = new Intl.RelativeTimeFormat('en', {
@@ -47,6 +51,19 @@ function formatRelativeTime(date) {
 
 <template>
   <article class="repo-card">
+    <button
+      class="favorite-button"
+      :class="{ 'is-favorite': isFavorited }"
+      type="button"
+      :aria-label="
+        isFavorited ? `Remove ${repo.name} from favorites` : `Add ${repo.name} to favorites`
+      "
+      :aria-pressed="isFavorited"
+      @click.stop="toggleFavorite(repo)"
+    >
+      <span aria-hidden="true">{{ isFavorited ? '★' : '☆' }}</span>
+    </button>
+
     <header>
       <h2>
         <RouterLink :to="repoRoute">{{ repo.name }}</RouterLink>
@@ -78,9 +95,40 @@ function formatRelativeTime(date) {
 
 <style scoped>
 .repo-card {
-  padding: 1rem;
+  position: relative;
+  padding: 1rem 3.5rem 1rem 1rem;
   border: 1px solid #d8dee4;
   border-radius: 0.5rem;
+}
+
+.favorite-button {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: 1px solid #d8dee4;
+  border-radius: 50%;
+  color: #57606a;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  background: #ffffff;
+  place-items: center;
+}
+
+.favorite-button:hover,
+.favorite-button.is-favorite {
+  border-color: #bf8700;
+  color: #9a6700;
+  background: #fff8c5;
+}
+
+.favorite-button:focus-visible {
+  outline: 2px solid #0969da;
+  outline-offset: 2px;
 }
 
 .repo-card h2 {

@@ -1,8 +1,9 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import ErrorState from '../components/ErrorState.vue'
 import LoadingState from '../components/LoadingState.vue'
 import { getContributors, getRepo } from '../api/github'
+import { useFavorites } from '../composables/useFavorites'
 
 const props = defineProps({
   owner: {
@@ -20,6 +21,9 @@ const contributors = ref([])
 const loading = ref(false)
 const error = ref(null)
 
+const { isFavorite, toggleFavorite } = useFavorites()
+const isFavorited = computed(() => (repo.value ? isFavorite(repo.value.id) : false))
+
 const numberFormatter = new Intl.NumberFormat('en-US')
 const dateFormatter = new Intl.DateTimeFormat('en-US', {
   dateStyle: 'medium',
@@ -32,6 +36,12 @@ function formatNumber(value) {
 function formatDate(value) {
   const date = new Date(value)
   return Number.isNaN(date.getTime()) ? 'Unknown' : dateFormatter.format(date)
+}
+
+function toggleRepoFavorite() {
+  if (repo.value) {
+    toggleFavorite(repo.value)
+  }
 }
 
 async function loadDetails() {
@@ -67,7 +77,19 @@ onMounted(loadDetails)
     <article v-else-if="repo" aria-labelledby="repository-title">
       <header class="repo-header">
         <div>
-          <h1 id="repository-title">{{ repo.name }}</h1>
+          <div class="title-row">
+            <h1 id="repository-title">{{ repo.name }}</h1>
+            <button
+              class="favorite-button"
+              :class="{ 'is-favorite': isFavorited }"
+              type="button"
+              :aria-pressed="isFavorited"
+              @click="toggleRepoFavorite"
+            >
+              <span aria-hidden="true">{{ isFavorited ? '★' : '☆' }}</span>
+              {{ isFavorited ? 'Favorited' : 'Add to Favorites' }}
+            </button>
+          </div>
           <a
             class="owner-link"
             :href="repo.owner.html_url"
@@ -173,8 +195,42 @@ onMounted(loadDetails)
   margin-bottom: 1.5rem;
 }
 
-.repo-header h1 {
-  margin: 0 0 0.75rem;
+.title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.title-row h1 {
+  margin: 0;
+}
+
+.favorite-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d8dee4;
+  border-radius: 0.375rem;
+  color: #24292f;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  background: #f6f8fa;
+}
+
+.favorite-button:hover,
+.favorite-button.is-favorite {
+  border-color: #bf8700;
+  color: #7d4e00;
+  background: #fff8c5;
+}
+
+.favorite-button:focus-visible {
+  outline: 2px solid #0969da;
+  outline-offset: 2px;
 }
 
 .owner-link {
