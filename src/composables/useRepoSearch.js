@@ -1,6 +1,23 @@
 import { ref } from 'vue'
 import { searchRepos } from '../api/github'
 
+const MAX_CACHE_ENTRIES = 20
+const resultsCache = new Map()
+
+function buildCacheKey(query, page, sortBy, languageFilter) {
+  return `query:${query}::page:${page}::sortBy:${sortBy}::languageFilter:${languageFilter}`
+}
+
+function cacheResponse(key, response) {
+  resultsCache.delete(key)
+  resultsCache.set(key, response)
+
+  if (resultsCache.size > MAX_CACHE_ENTRIES) {
+    const oldestKey = resultsCache.keys().next().value
+    resultsCache.delete(oldestKey)
+  }
+}
+
 export function useRepoSearch() {
   const query = ref('')
   const results = ref([])
@@ -21,7 +38,25 @@ export function useRepoSearch() {
       : query.value
   }
 
+  function applyResponse(response, targetPage, append) {
+    const items = response.items ?? []
+
+    results.value = append ? [...results.value, ...items] : items
+    page.value = targetPage
+    totalCount.value = response.total_count
+    hasMore.value = items.length > 0 && results.value.length < response.total_count
+  }
+
   async function fetchResults(targetPage, append = false) {
+    const cacheKey = buildCacheKey(query.value, targetPage, sortBy.value, languageFilter.value)
+    const cachedResponse = resultsCache.get(cacheKey)
+
+    if (cachedResponse) {
+      error.value = null
+      applyResponse(cachedResponse, targetPage, append)
+      return
+    }
+
     currentController?.abort()
 
     const controller = new AbortController()
@@ -37,12 +72,9 @@ export function useRepoSearch() {
         controller.signal,
         sortBy.value,
       )
-      const items = response.items ?? []
 
-      results.value = append ? [...results.value, ...items] : items
-      page.value = targetPage
-      totalCount.value = response.total_count
-      hasMore.value = items.length > 0 && results.value.length < response.total_count
+      cacheResponse(cacheKey, response)
+      applyResponse(response, targetPage, append)
     } catch (caughtError) {
       if (caughtError.name === 'AbortError') {
         return
