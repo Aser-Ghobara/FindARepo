@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from 'vue'
 import EmptyState from '../components/EmptyState.vue'
 import ErrorState from '../components/ErrorState.vue'
 import LoadingState from '../components/LoadingState.vue'
@@ -9,13 +10,18 @@ import { useRepoSearch } from '../composables/useRepoSearch'
 const { query, results, loading, error, hasMore, hasSearched, totalCount, search, loadMore } =
   useRepoSearch()
 
+const isCompact = computed(
+  () =>
+    query.value.trim() !== '' || results.value.length > 0 || loading.value || error.value !== null,
+)
+
 function retrySearch() {
   search(query.value)
 }
 </script>
 
 <template>
-  <main class="search-view" :class="{ 'has-searched': hasSearched }">
+  <main class="search-view" :class="{ 'has-searched': isCompact }">
     <header class="search-header">
       <div class="search-copy">
         <h1>Just another way to find repositories.</h1>
@@ -70,12 +76,14 @@ function retrySearch() {
     margin 400ms ease,
     transform 400ms ease,
     padding 400ms ease;
+  transition-delay: 250ms;
 }
 
 .search-view.has-searched .search-header {
   padding: var(--space-4) var(--space-6);
   margin-top: var(--space-6);
   transform: translateY(0);
+  transition-delay: 0ms;
 }
 
 .search-copy h1 {
@@ -84,10 +92,12 @@ function retrySearch() {
   font-size: clamp(2rem, 6vw, 3rem);
   line-height: 1.1;
   transition: font-size 400ms ease;
+  transition-delay: 250ms;
 }
 
 .has-searched .search-copy h1 {
   font-size: 1.5rem;
+  transition-delay: 0ms;
 }
 
 .search-copy p {

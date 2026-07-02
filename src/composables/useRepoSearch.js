@@ -54,6 +54,7 @@ export function useRepoSearch() {
       currentController?.abort()
       currentController = undefined
       loading.value = false
+      error.value = null
       return
     }
 
