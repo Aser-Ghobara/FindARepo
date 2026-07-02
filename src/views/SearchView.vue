@@ -7,8 +7,18 @@ import RepoList from '../components/RepoList.vue'
 import SearchBar from '../components/SearchBar.vue'
 import { useRepoSearch } from '../composables/useRepoSearch'
 
-const { query, results, loading, error, hasMore, hasSearched, totalCount, search, loadMore } =
-  useRepoSearch()
+const {
+  query,
+  results,
+  loading,
+  error,
+  hasMore,
+  hasSearched,
+  totalCount,
+  search,
+  loadMore,
+  setSortBy,
+} = useRepoSearch()
 
 const isCompact = computed(
   () =>
@@ -48,6 +58,7 @@ function retrySearch() {
         :query="query"
         :total-count="totalCount"
         @load-more="loadMore"
+        @sort-change="setSortBy"
       />
     </section>
   </main>

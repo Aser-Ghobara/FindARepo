@@ -48,12 +48,23 @@ async function request(path, signal) {
   return response.status === 204 ? null : response.json()
 }
 
-export function searchRepos(query, page, perPage, signal) {
+const SORT_PARAMS = {
+  stars: { sort: 'stars', order: 'desc' },
+  updated: { sort: 'updated', order: 'desc' },
+}
+
+export function searchRepos(query, page, perPage, signal, sort) {
   const params = new URLSearchParams({
     q: query,
     page: String(page),
     per_page: String(perPage),
   })
+
+  const sortParams = SORT_PARAMS[sort]
+  if (sortParams) {
+    params.set('sort', sortParams.sort)
+    params.set('order', sortParams.order)
+  }
 
   return request(`/search/repositories?${params}`, signal)
 }

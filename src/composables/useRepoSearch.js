@@ -11,6 +11,7 @@ export function useRepoSearch() {
   const hasMore = ref(false)
   const hasSearched = ref(false)
   const totalCount = ref(0)
+  const sortBy = ref('best-match')
   let currentController
 
   async function fetchResults(targetPage, append = false) {
@@ -22,7 +23,13 @@ export function useRepoSearch() {
     error.value = null
 
     try {
-      const response = await searchRepos(query.value, targetPage, perPage.value, controller.signal)
+      const response = await searchRepos(
+        query.value,
+        targetPage,
+        perPage.value,
+        controller.signal,
+        sortBy.value,
+      )
       const items = response.items ?? []
 
       results.value = append ? [...results.value, ...items] : items
@@ -70,6 +77,20 @@ export function useRepoSearch() {
     await fetchResults(page.value + 1, true)
   }
 
+  async function setSortBy(value) {
+    sortBy.value = value
+
+    if (!query.value.trim()) {
+      return
+    }
+
+    results.value = []
+    page.value = 1
+    hasMore.value = false
+    totalCount.value = 0
+    await fetchResults(1)
+  }
+
   return {
     query,
     results,
@@ -80,7 +101,9 @@ export function useRepoSearch() {
     hasMore,
     hasSearched,
     totalCount,
+    sortBy,
     search,
     loadMore,
+    setSortBy,
   }
 }
