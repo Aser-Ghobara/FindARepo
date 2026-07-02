@@ -13,7 +13,7 @@ A Vue 3 app for searching GitHub repositories, viewing repository details and to
 ## Setup and run
 
 ```sh
-git clone <repo-url>
+git clone https://github.com/Aser-Ghobara/FindARepo.git
 cd FindARepo
 npm install
 npm run dev
