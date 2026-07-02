@@ -20,7 +20,7 @@ export function useRepoSearch() {
 
       results.value = append ? [...results.value, ...items] : items
       page.value = targetPage
-      hasMore.value = results.value.length < response.total_count
+      hasMore.value = items.length > 0 && results.value.length < response.total_count
     } catch (caughtError) {
       error.value = caughtError
     } finally {
@@ -33,6 +33,10 @@ export function useRepoSearch() {
     results.value = []
     page.value = 1
     hasMore.value = false
+
+    if (!searchQuery.trim()) {
+      return
+    }
 
     await fetchResults(1)
   }
