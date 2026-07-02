@@ -12,7 +12,14 @@ export function useRepoSearch() {
   const hasSearched = ref(false)
   const totalCount = ref(0)
   const sortBy = ref('best-match')
+  const languageFilter = ref('')
   let currentController
+
+  function buildSearchQuery() {
+    return languageFilter.value
+      ? `${query.value} language:${languageFilter.value}`
+      : query.value
+  }
 
   async function fetchResults(targetPage, append = false) {
     currentController?.abort()
@@ -24,7 +31,7 @@ export function useRepoSearch() {
 
     try {
       const response = await searchRepos(
-        query.value,
+        buildSearchQuery(),
         targetPage,
         perPage.value,
         controller.signal,
@@ -91,6 +98,20 @@ export function useRepoSearch() {
     await fetchResults(1)
   }
 
+  async function setLanguageFilter(value) {
+    languageFilter.value = value
+
+    if (!query.value.trim()) {
+      return
+    }
+
+    results.value = []
+    page.value = 1
+    hasMore.value = false
+    totalCount.value = 0
+    await fetchResults(1)
+  }
+
   return {
     query,
     results,
@@ -102,8 +123,10 @@ export function useRepoSearch() {
     hasSearched,
     totalCount,
     sortBy,
+    languageFilter,
     search,
     loadMore,
     setSortBy,
+    setLanguageFilter,
   }
 }

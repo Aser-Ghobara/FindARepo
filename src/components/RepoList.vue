@@ -33,12 +33,30 @@ defineProps({
   },
 })
 
-const emit = defineEmits(['load-more', 'sort-change'])
+const LANGUAGES = [
+  'JavaScript',
+  'TypeScript',
+  'Python',
+  'Java',
+  'Go',
+  'Rust',
+  'C++',
+  'Ruby',
+  'HTML',
+  'CSS',
+]
+
+const emit = defineEmits(['load-more', 'sort-change', 'filter-change'])
 const selectedSort = ref('best-match')
+const selectedLanguage = ref('')
 const numberFormatter = new Intl.NumberFormat('en-US')
 
 function handleSortChange() {
   emit('sort-change', selectedSort.value)
+}
+
+function handleLanguageChange() {
+  emit('filter-change', selectedLanguage.value)
 }
 </script>
 
@@ -49,13 +67,29 @@ function handleSortChange() {
       <strong>“{{ query }}”</strong>
     </p>
 
-    <div class="sort-control">
-      <label for="repo-sort">Sort by</label>
-      <select id="repo-sort" v-model="selectedSort" @change="handleSortChange">
-        <option value="best-match">Best match</option>
-        <option value="stars">Most stars</option>
-        <option value="updated">Recently updated</option>
-      </select>
+    <div class="filter-controls">
+      <div class="sort-control">
+        <label for="repo-language-filter">Language</label>
+        <select
+          id="repo-language-filter"
+          v-model="selectedLanguage"
+          @change="handleLanguageChange"
+        >
+          <option value="">All languages</option>
+          <option v-for="language in LANGUAGES" :key="language" :value="language">
+            {{ language }}
+          </option>
+        </select>
+      </div>
+
+      <div class="sort-control">
+        <label for="repo-sort">Sort by</label>
+        <select id="repo-sort" v-model="selectedSort" @change="handleSortChange">
+          <option value="best-match">Best match</option>
+          <option value="stars">Most stars</option>
+          <option value="updated">Recently updated</option>
+        </select>
+      </div>
     </div>
   </header>
 
@@ -87,6 +121,14 @@ function handleSortChange() {
 
 .results-count strong {
   color: var(--color-text);
+}
+
+.filter-controls {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
 }
 
 .sort-control {
@@ -179,6 +221,13 @@ function handleSortChange() {
   .results-header {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .filter-controls {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: var(--space-3);
   }
 
   .sort-control {

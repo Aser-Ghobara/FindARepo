@@ -18,6 +18,7 @@ const {
   search,
   loadMore,
   setSortBy,
+  setLanguageFilter,
 } = useRepoSearch()
 
 const isCompact = computed(
@@ -59,6 +60,7 @@ function retrySearch() {
         :total-count="totalCount"
         @load-more="loadMore"
         @sort-change="setSortBy"
+        @filter-change="setLanguageFilter"
       />
     </section>
   </main>
