@@ -18,14 +18,16 @@ function loadFavorites() {
 }
 
 const favorites = ref(loadFavorites())
+const writeError = ref(false)
 
 watch(
   favorites,
   (updatedFavorites) => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedFavorites))
+      writeError.value = false
     } catch {
-      return
+      writeError.value = true
     }
   },
   { deep: true, flush: 'sync' },
@@ -51,5 +53,6 @@ export function useFavorites() {
     favorites,
     isFavorite,
     toggleFavorite,
+    writeError,
   }
 }

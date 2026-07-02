@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import ErrorState from '../components/ErrorState.vue'
 import LoadingState from '../components/LoadingState.vue'
+import NotFoundState from '../components/NotFoundState.vue'
 import { getContributors, getRepo } from '../api/github'
 import { useFavorites } from '../composables/useFavorites'
 
@@ -24,6 +25,7 @@ const loading = ref(false)
 const error = ref(null)
 
 const { isFavorite, toggleFavorite } = useFavorites()
+const isNotFound = computed(() => error.value?.status === 404)
 const isFavorited = computed(() => (repo.value ? isFavorite(repo.value.id) : false))
 const cameFromFavorites = computed(() => route.query.from === 'favorites')
 const backRoute = computed(() => (cameFromFavorites.value ? '/favorites' : '/'))
@@ -79,6 +81,7 @@ onMounted(loadDetails)
     <RouterLink class="back-link" :to="backRoute">← {{ backLabel }}</RouterLink>
 
     <LoadingState v-if="loading" message="Loading repository details..." />
+    <NotFoundState v-else-if="isNotFound" />
     <ErrorState v-else-if="error" :message="error.message" @retry="loadDetails" />
 
     <article v-else-if="repo" aria-labelledby="repository-title">
