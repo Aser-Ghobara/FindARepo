@@ -14,14 +14,19 @@ export class GitHubApiError extends Error {
   }
 }
 
-async function request(path) {
+async function request(path, signal) {
   let response
 
   try {
     response = await fetch(`${API_BASE_URL}${path}`, {
       headers: REQUEST_HEADERS,
+      signal,
     })
-  } catch {
+  } catch (caughtError) {
+    if (caughtError.name === 'AbortError') {
+      throw caughtError
+    }
+
     throw new GitHubApiError('Network error, check your connection.', 'NETWORK_ERROR', null)
   }
 
@@ -43,14 +48,14 @@ async function request(path) {
   return response.status === 204 ? null : response.json()
 }
 
-export function searchRepos(query, page, perPage) {
+export function searchRepos(query, page, perPage, signal) {
   const params = new URLSearchParams({
     q: query,
     page: String(page),
     per_page: String(perPage),
   })
 
-  return request(`/search/repositories?${params}`)
+  return request(`/search/repositories?${params}`, signal)
 }
 
 export function getRepo(owner, name) {
