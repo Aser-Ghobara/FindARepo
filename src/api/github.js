@@ -6,11 +6,12 @@ const REQUEST_HEADERS = {
 }
 
 export class GitHubApiError extends Error {
-  constructor(message, code, status) {
+  constructor(message, code, status, resetAt = null) {
     super(message)
     this.name = 'GitHubApiError'
     this.code = code
     this.status = status
+    this.resetAt = resetAt
   }
 }
 
@@ -32,10 +33,14 @@ async function request(path, signal) {
 
   if (!response.ok) {
     if (response.status === 403 && response.headers.get('x-ratelimit-remaining') === '0') {
+      const resetHeader = response.headers.get('x-ratelimit-reset')
+      const resetAt = resetHeader ? Number(resetHeader) * 1000 : null
+
       throw new GitHubApiError(
         'GitHub API rate limit exceeded. Try again in a few minutes.',
         'RATE_LIMITED',
         response.status,
+        resetAt,
       )
     }
 

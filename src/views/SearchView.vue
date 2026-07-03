@@ -48,7 +48,12 @@ function retrySearch() {
 
     <section v-if="hasSearched && isCompact" class="search-results" aria-label="Search results">
       <LoadingState v-if="loading && results.length === 0" />
-      <ErrorState v-else-if="error" :message="error.message" @retry="retrySearch" />
+      <ErrorState
+        v-else-if="error"
+        :message="error.message"
+        :reset-at="error.resetAt"
+        @retry="retrySearch"
+      />
       <EmptyState v-else-if="!loading && results.length === 0 && query.trim() !== ''" />
 
       <RepoList

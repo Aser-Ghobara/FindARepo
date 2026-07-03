@@ -82,7 +82,12 @@ onMounted(loadDetails)
 
     <LoadingState v-if="loading" message="Loading repository details..." />
     <NotFoundState v-else-if="isNotFound" />
-    <ErrorState v-else-if="error" :message="error.message" @retry="loadDetails" />
+    <ErrorState
+      v-else-if="error"
+      :message="error.message"
+      :reset-at="error.resetAt"
+      @retry="loadDetails"
+    />
 
     <article v-else-if="repo" aria-labelledby="repository-title">
       <header class="repo-header">
