@@ -59,6 +59,11 @@ const languageColor = computed(
   () => languageColors[props.repo.language] ?? 'var(--color-text-muted)',
 )
 
+/**
+ * Formats a date as a human-readable relative time.
+ * @param {string} date - An ISO date string.
+ * @returns {string} The relative time, or 'Unknown' if the date can't be parsed.
+ */
 function formatRelativeTime(date) {
   const timestamp = Date.parse(date)
 

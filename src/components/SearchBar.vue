@@ -23,6 +23,12 @@ watch(
   },
 )
 
+/**
+ * Handles input changes, debouncing the emitted query except when it's cleared,
+ * which emits immediately so results clear without a delay.
+ * @param {Event} event - The native input event.
+ * @returns {void}
+ */
 function handleInput(event) {
   const value = event.target.value
   inputValue.value = value

@@ -5,6 +5,14 @@ const REQUEST_HEADERS = {
   'X-GitHub-Api-Version': '2022-11-28',
 }
 
+/**
+ * Error thrown by all GitHub API calls in this module, normalizing network failures,
+ * rate limiting, and non-2xx responses into a single shape.
+ * @param {string} message - Human-readable error message.
+ * @param {string} code - Machine-readable error code.
+ * @param {number|null} status - HTTP status code, or null for network-level failures.
+ * @param {number|null} [resetAt] - Unix timestamp in milliseconds when the rate limit resets, if known.
+ */
 export class GitHubApiError extends Error {
   constructor(message, code, status, resetAt = null) {
     super(message)
@@ -58,6 +66,15 @@ const SORT_PARAMS = {
   updated: { sort: 'updated', order: 'desc' },
 }
 
+/**
+ * Searches GitHub repositories by keyword, with optional sorting.
+ * @param {string} query - Search query, may include GitHub search qualifiers (e.g. 'language:Vue').
+ * @param {number} page - Page number to fetch, 1-indexed.
+ * @param {number} perPage - Number of results per page.
+ * @param {AbortSignal} [signal] - Signal used to cancel the request.
+ * @param {string} [sort] - Sort key, one of 'stars', 'updated', or 'best-match' (default).
+ * @returns {Promise<object>} The parsed GitHub search response, including `items` and `total_count`.
+ */
 export function searchRepos(query, page, perPage, signal, sort) {
   const params = new URLSearchParams({
     q: query,
@@ -74,10 +91,22 @@ export function searchRepos(query, page, perPage, signal, sort) {
   return request(`/search/repositories?${params}`, signal)
 }
 
+/**
+ * Fetches a single repository's details.
+ * @param {string} owner - Repository owner's username or organization.
+ * @param {string} name - Repository name.
+ * @returns {Promise<object>} The parsed repository object.
+ */
 export function getRepo(owner, name) {
   return request(`/repos/${encodeURIComponent(owner)}/${encodeURIComponent(name)}`)
 }
 
+/**
+ * Fetches a repository's contributors.
+ * @param {string} owner - Repository owner's username or organization.
+ * @param {string} name - Repository name.
+ * @returns {Promise<object[]>} The list of contributors, or an empty array if none are returned.
+ */
 export async function getContributors(owner, name) {
   const contributors = await request(
     `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(name)}/contributors`,

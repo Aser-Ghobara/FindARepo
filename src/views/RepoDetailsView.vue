@@ -42,6 +42,11 @@ function formatNumber(value) {
   return numberFormatter.format(value ?? 0)
 }
 
+/**
+ * Formats a date value for display.
+ * @param {string} value - An ISO date string.
+ * @returns {string} The formatted date, or 'Unknown' if the value can't be parsed.
+ */
 function formatDate(value) {
   const date = new Date(value)
   return Number.isNaN(date.getTime()) ? 'Unknown' : dateFormatter.format(date)
@@ -53,6 +58,11 @@ function toggleRepoFavorite() {
   }
 }
 
+/**
+ * Loads the repository and its contributors for the current route params, and
+ * stores any failure (including a 404) in `error` for the template to render.
+ * @returns {Promise<void>}
+ */
 async function loadDetails() {
   loading.value = true
   error.value = null
