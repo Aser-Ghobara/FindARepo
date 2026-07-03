@@ -1,5 +1,7 @@
 # FindARepo
 
+[![CI](https://github.com/Aser-Ghobara/FindARepo/actions/workflows/ci.yml/badge.svg)](https://github.com/Aser-Ghobara/FindARepo/actions/workflows/ci.yml)
+
 A Vue 3 app for searching GitHub repositories, viewing repository details and top contributors, and saving favorites for later.
 
 ## Tech stack
