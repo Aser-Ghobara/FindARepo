@@ -9,6 +9,7 @@ A Vue 3 app for searching GitHub repositories, viewing repository details and to
 - Native `fetch` for all GitHub API calls, no HTTP client library
 - Plain CSS with a design tokens file, no CSS framework
 - [Vitest](https://vitest.dev/) and [@vue/test-utils](https://test-utils.vuejs.org/) (with `jsdom`) for unit tests
+- [Playwright](https://playwright.dev/) for end-to-end tests against a running dev server
 
 ## Prerequisites
 
@@ -64,10 +65,16 @@ npm run dev
 
 Runs a dev server at `http://localhost:5173` by default.
 
-To run the test suite:
+To run the unit test suite:
 
 ```sh
 npm run test
+```
+
+To run the end-to-end tests (this starts the dev server for you if one isn't already running):
+
+```sh
+npm run test:e2e
 ```
 
 ## Key design and architectural decisions
