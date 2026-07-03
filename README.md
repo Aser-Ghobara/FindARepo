@@ -10,6 +10,49 @@ A Vue 3 app for searching GitHub repositories, viewing repository details and to
 - Plain CSS with a design tokens file, no CSS framework
 - [Vitest](https://vitest.dev/) and [@vue/test-utils](https://test-utils.vuejs.org/) (with `jsdom`) for unit tests
 
+## Prerequisites
+
+You'll need [Node.js](https://nodejs.org/) (which includes npm) and [Git](https://git-scm.com/) installed. This project requires Node `>=22.22.2` (see `engines` in `package.json`); it was built and tested against Node 22.22.2, which is also pinned in `.tool-versions`.
+
+**Optional: use mise to get the exact Node version automatically.** [mise](https://mise.jdx.dev/) reads `.tool-versions` and installs the matching Node version for you:
+
+```sh
+curl https://mise.run | sh
+```
+
+Then, from the project directory:
+
+```sh
+mise install
+```
+
+This is entirely optional, any Node 22+ install (via Homebrew, winget, nvm, apt, or the official installer below) works fine too.
+
+**macOS (Homebrew):**
+
+```sh
+brew install node git
+```
+
+**Windows (winget):**
+
+```sh
+winget install OpenJS.NodeJS.LTS Git.Git
+```
+
+Alternatively, download the Node.js installer directly from [nodejs.org](https://nodejs.org/) and Git from [git-scm.com](https://git-scm.com/download/win).
+
+**Linux (Debian/Ubuntu, apt):**
+
+```sh
+sudo apt update
+sudo apt install nodejs npm git
+```
+
+Ubuntu/Debian's default `apt` repositories often carry an older Node version than this project requires. If `node -v` comes back below `22.22.2`, install via [NodeSource](https://github.com/nodesource/distributions), [nvm](https://github.com/nvm-sh/nvm), or mise (see above) instead.
+
+Verify the install with `node -v`, `npm -v`, and `git --version`.
+
 ## Setup and run
 
 ```sh
